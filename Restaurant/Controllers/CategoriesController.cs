@@ -13,11 +13,12 @@ namespace Restaurant.Controllers
     {
         private readonly ModelContext _context;
 
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-
-        public CategoriesController(ModelContext context)
+        public CategoriesController(ModelContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            this.webHostEnvironment= webHostEnvironment;
         }
 
         // GET: Categories
@@ -57,10 +58,27 @@ namespace Restaurant.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Categoryname,Imagepath")] Category category)
+        public async Task<IActionResult> Create([Bind("Id,Categoryname,Imagepath,ImageFile")] Category category)
         {
             if (ModelState.IsValid)
             {
+                if(category.ImageFile != null)
+                {
+                    string wwwRootPath = webHostEnvironment.WebRootPath;
+
+                    string fileName= Guid.NewGuid().ToString() + category.ImageFile.FileName ;
+
+                    string path = Path.Combine(wwwRootPath + "/Images/" + fileName);
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await category.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    category.Imagepath = fileName;
+                }
+
+
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -89,7 +107,7 @@ namespace Restaurant.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(decimal id, [Bind("Id,Categoryname,Imagepath")] Category category)
+        public async Task<IActionResult> Edit(decimal id, [Bind("Id,Categoryname,Imagepath, ImageFile")] Category category)
         {
             if (id != category.Id)
             {
@@ -100,6 +118,24 @@ namespace Restaurant.Controllers
             {
                 try
                 {
+                    if (category.ImageFile != null)
+                    {
+                        string wwwRootPath = webHostEnvironment.WebRootPath;
+
+                        string fileName = Guid.NewGuid().ToString() + category.ImageFile.FileName;
+
+                        string path = Path.Combine(wwwRootPath + "/Images/" + fileName);
+
+                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        {
+                            await category.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        category.Imagepath = fileName;
+                    }
+
+
+
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
