@@ -11,6 +11,7 @@ public partial class Category
     public string? Categoryname { get; set; }
 
     [NotMapped]
+
     public IFormFile? ImageFile { get; set; }
     public string? Imagepath { get; set; }
 
