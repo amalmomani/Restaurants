@@ -6,6 +6,8 @@ namespace Restaurant.Controllers
     {
         public IActionResult Index()
         {
+            // var Fname= "Amal";
+            ViewBag.Fname =  HttpContext.Session.GetString("Fname");
             return View();
         }
     }

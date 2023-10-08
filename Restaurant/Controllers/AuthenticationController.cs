@@ -26,6 +26,12 @@ namespace Restaurant.Controllers
         }
 
 
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("Id,Fname,Lname,Imagepath,ImageFile")] Customer customer, string email, string password)
@@ -47,26 +53,31 @@ namespace Restaurant.Controllers
 
                     customer.Imagepath = fileName;
                 }
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
 
-                Userlogin userlogin = new Userlogin();
-                userlogin.Username = email;
-                userlogin.Password = password;
-                userlogin.RoleId = 2;
-                userlogin.CustomerId = customer.Id;
+                var user = _context.Userlogins.Where(x => x.Username == email).FirstOrDefault();
+                if (user == null)
+                {
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
 
-                _context.Add(userlogin);
-                await _context.SaveChangesAsync();
+                    Userlogin userlogin = new Userlogin();
+                    userlogin.Username = email;
+                    userlogin.Password = password;
+                    userlogin.RoleId = 2;
+                    userlogin.CustomerId = customer.Id;
 
-                return RedirectToAction("Index","Home");
+                    _context.Add(userlogin);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewBag.Error = "Email is already used, please try another one."; 
+                }
             }
             return View(customer);
         }
-
-
-
-
 
 
         [HttpPost]
@@ -106,5 +117,47 @@ namespace Restaurant.Controllers
             }
             return View(customer);
         }
+
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> Login([Bind("Id,Username,Password")] Userlogin userlogin)
+        {
+            var auth = _context.Userlogins.Where(x => x.Username == userlogin.Username && x.Password == userlogin.Password).FirstOrDefault();
+
+            if(auth != null)
+            {
+                var user = _context.Customers.Where(x=>x.Id== auth.CustomerId).FirstOrDefault();
+
+                switch (auth.RoleId)
+                {
+                    case 1:                        
+                        HttpContext.Session.SetString("Fname", user.Fname );
+                        HttpContext.Session.SetString("Lname", user.Lname);
+                        HttpContext.Session.SetString("Username", auth.Username);
+                        HttpContext.Session.SetInt32("CustomerId", (int)auth.CustomerId );
+                        return RedirectToAction("Index", "Admin");
+                    case 2:
+                        // var Fname= "Amal";
+
+                        HttpContext.Session.SetString("Fname", user.Fname);
+                        HttpContext.Session.SetString("Lname", user.Lname);
+                        HttpContext.Session.SetString("Username", auth.Username);
+                        HttpContext.Session.SetString("Image", user.Imagepath);
+                        HttpContext.Session.SetInt32("CustomerId", (int)auth.CustomerId);
+
+                        return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+
+            }
+
+            return View();
+        }
+
+
     }
 }

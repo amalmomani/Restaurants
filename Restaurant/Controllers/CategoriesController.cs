@@ -24,6 +24,7 @@ namespace Restaurant.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
+            ViewBag.Lname = HttpContext.Session.GetString("Lname");
               return _context.Categories != null ? 
                           View(await _context.Categories.ToListAsync()) :
                           Problem("Entity set 'ModelContext.Categories'  is null.");
@@ -50,6 +51,12 @@ namespace Restaurant.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
+            ViewBag.Lname = HttpContext.Session.GetString("Lname");
+
+            ViewBag.Lname = "Hello";
+            ViewBag.num = 1;
+            ViewBag.boolean = true;
+
             return View();
         }
 

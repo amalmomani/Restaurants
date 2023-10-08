@@ -12,6 +12,9 @@ namespace Restaurant
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ModelContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+            });
 
             var app = builder.Build();
 
@@ -27,7 +30,7 @@ namespace Restaurant
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapControllerRoute(
