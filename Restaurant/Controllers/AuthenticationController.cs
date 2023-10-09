@@ -152,7 +152,7 @@ namespace Restaurant.Controllers
             }
             else
             {
-
+                ViewBag.Error = "Wrong credentials";
             }
 
             return View();

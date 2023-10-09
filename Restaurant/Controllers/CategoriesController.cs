@@ -24,6 +24,7 @@ namespace Restaurant.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             ViewBag.Lname = HttpContext.Session.GetString("Lname");
               return _context.Categories != null ? 
                           View(await _context.Categories.ToListAsync()) :
@@ -33,6 +34,7 @@ namespace Restaurant.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(decimal? id)
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
@@ -51,6 +53,7 @@ namespace Restaurant.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             ViewBag.Lname = HttpContext.Session.GetString("Lname");
 
             ViewBag.Lname = "Hello";
@@ -96,6 +99,7 @@ namespace Restaurant.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(decimal? id)
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
@@ -165,6 +169,7 @@ namespace Restaurant.Controllers
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(decimal? id)
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
@@ -185,6 +190,7 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(decimal id)
         {
+            ViewBag.Fname = HttpContext.Session.GetString("Fname");
             if (_context.Categories == null)
             {
                 return Problem("Entity set 'ModelContext.Categories'  is null.");

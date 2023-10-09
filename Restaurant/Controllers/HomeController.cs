@@ -7,15 +7,27 @@ namespace Restaurant.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly  ModelContext context;
+        public HomeController(ILogger<HomeController> logger, ModelContext context)
         {
             _logger = logger;
+            this.context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var categories = context.Categories.ToList();
+
+
+            return View(categories);
+        }
+
+
+        public IActionResult GetProductByCategory(int id)
+        {
+            var product = context.Products.Where(x => x.Categoryid == id).ToList();
+
+            return View(product);
         }
 
         public IActionResult Privacy()

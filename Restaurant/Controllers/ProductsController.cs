@@ -47,7 +47,7 @@ namespace Restaurant.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["Categoryid"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["Categoryid"] = new SelectList(_context.Categories, "Id", "Categoryname");
             return View();
         }
 
@@ -81,7 +81,7 @@ namespace Restaurant.Controllers
             {
                 return NotFound();
             }
-            ViewData["Categoryid"] = new SelectList(_context.Categories, "Id", "Id", product.Categoryid);
+            ViewData["Categoryid"] = new SelectList(_context.Categories, "Id", "Categoryname", product.Categoryid);
             return View(product);
         }
 

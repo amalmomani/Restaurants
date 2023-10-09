@@ -95,6 +95,8 @@
                         </div>
                     </li>
                     <li class="nav-item nav-profile dropdown">
+                        <p>@ViewBag.Fname</p>
+
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                             <img src="~/DashboardAssets/images/faces/face28.jpg" alt="profile" />
                         </a>
@@ -296,7 +298,7 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">
+                        <a class="nav-link" href="/Admin/EditProfile/@ViewBag.Id">
                             <i class="icon-grid menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                         </a>
