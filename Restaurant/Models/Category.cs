@@ -12,7 +12,6 @@ public partial class Category
     [NotMapped]
     public IFormFile? ImageFile { get; set; }
     public string? Imagepath { get; set; }
-    public string? Test { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
