@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Restaurant.Models.JoinTable>
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Sales</p>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="example" class="display expandable-table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Category</th>
+                                        <th>Product</th>
+                                        <th>Customer name</th>
+                                        <th>Quantity</th>
+                                        <th>Date</th>
+                                        <th>Price/product</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <img src="@Url.Content("~/Images/" + item.category.Imagepath )" asp-append-version="true" width="100" height="100" />
+                                            </td>
+                                            <td>@item.category.Categoryname</td>
+                                            <td>@item.product.Name</td>
+                                            <td>@item.customer.Fname  @item.customer.Lname</td>
+                                            <td>@item.productcustomer.Quantity</td>
+                                            <td>@item.productcustomer.DateFrom</td>
+                                            <td>@item.product.Price</td>
+                                            <td>@(item.productcustomer.Quantity * item.product.Price)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
