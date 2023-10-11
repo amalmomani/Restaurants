@@ -62,5 +62,44 @@ namespace Restaurant.Controllers
 
             return View(model);
         }
+
+
+        //get
+        public IActionResult Search()
+        {
+            var model = _context.Productcustomers.Include(p => p.Product).Include(c => c.Customer).ToList();
+
+            return View(model);
+        }
+
+        //post
+
+        [HttpPost]
+        public IActionResult Search(DateTime? startDate, DateTime? endDate)
+        {
+            var model = _context.Productcustomers.Include(p => p.Product).Include(c => c.Customer).ToList();
+
+            if(startDate == null && endDate == null)
+            {
+                return View(model);
+            }
+            else if(startDate !=null && endDate == null)
+            {
+                var result = model.Where(x => x.DateFrom.Value.Date >= startDate);
+                return View(result);
+            }
+            else if(startDate ==null && endDate != null)
+            {
+                var result = model.Where(x => x.DateFrom.Value.Date <= endDate);
+                return View(result);
+            }
+            else
+            {
+                var result = model.Where(x => x.DateFrom.Value.Date >= startDate && x.DateFrom.Value.Date <= endDate);
+                return View(result);
+
+            }
+        }
+
     }
 }
