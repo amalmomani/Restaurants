@@ -101,5 +101,135 @@ namespace Restaurant.Controllers
             }
         }
 
+
+        public IActionResult Report()
+        {
+
+            ViewData["Customers"] = _context.Customers.Count();
+
+            ViewBag.ProductsCount = _context.Products.Count();
+
+            ViewBag.PC = _context.Productcustomers.Sum(x => x.Quantity);
+
+            ViewBag.TotalSales = _context.Productcustomers.Sum(x => x.Quantity * (x.Product.Price));
+
+
+            var products = _context.Products.ToList();
+            var category = _context.Categories.ToList();
+            var customers = _context.Customers.ToList();
+            var productCustomers = _context.Productcustomers.ToList();
+
+
+            var model = from c in customers
+                        join pc in productCustomers on c.Id equals pc.CustomerId
+                        join p in products on pc.ProductId equals p.Id
+                        join cat in category on p.Categoryid equals cat.Id
+                        select new JoinTable { category = cat, customer = c, product = p, productcustomer = pc };
+
+            var result = Tuple.Create<IEnumerable<Product>, IEnumerable<Customer>,
+                IEnumerable<JoinTable>,
+                IEnumerable<Productcustomer>>
+                (products,customers,model,productCustomers);
+
+
+            return View(result);
+        }
+
+
+        [HttpPost]
+
+        public IActionResult Report(DateTime? startDate, DateTime? endDate)
+        {
+            ViewData["Customers"] = _context.Customers.Count();
+
+            ViewBag.ProductsCount = _context.Products.Count();
+
+            ViewBag.PC = _context.Productcustomers.Sum(x => x.Quantity);
+
+            ViewBag.TotalSales = _context.Productcustomers.Sum(x => x.Quantity * (x.Product.Price));
+
+
+            var products = _context.Products.ToList();
+            var category = _context.Categories.ToList();
+            var customers = _context.Customers.ToList();
+            var productCustomers = _context.Productcustomers.ToList();
+
+
+            var model = from c in customers
+                        join pc in productCustomers on c.Id equals pc.CustomerId
+                        join p in products on pc.ProductId equals p.Id
+                        join cat in category on p.Categoryid equals cat.Id
+                        select new JoinTable { category = cat, customer = c, product = p, productcustomer = pc };
+
+            var result = Tuple.Create<IEnumerable<Product>, IEnumerable<Customer>,
+                IEnumerable<JoinTable>,
+                IEnumerable<Productcustomer>>
+                (products, customers, model, productCustomers);
+
+
+
+
+
+            if (startDate == null && endDate == null)
+            {
+                return View(result);
+            }
+            else if (startDate != null && endDate == null)
+            {
+
+                var finalResult = productCustomers.Where(x => x.DateFrom.Value.Date >= startDate);
+
+                result = Tuple.Create<IEnumerable<Product>, IEnumerable<Customer>,
+                IEnumerable<JoinTable>,
+                IEnumerable<Productcustomer>>
+                (products, customers, model, finalResult);
+
+
+                ViewBag.PC = finalResult.Sum(x => x.Quantity);
+
+                ViewBag.TotalSales = finalResult.Sum(x => x.Quantity * (x.Product.Price));
+
+
+
+
+
+                return View(result);
+            }
+            else if (startDate == null && endDate != null)
+            {
+                var finalResult = productCustomers.Where(x => x.DateFrom.Value.Date <= endDate);
+                result = Tuple.Create<IEnumerable<Product>, IEnumerable<Customer>,
+                               IEnumerable<JoinTable>,
+                               IEnumerable<Productcustomer>>
+                               (products, customers, model, finalResult);
+                ViewBag.PC = finalResult.Sum(x => x.Quantity);
+
+                ViewBag.TotalSales = finalResult.Sum(x => x.Quantity * (x.Product.Price));
+
+                return View(result);
+            }
+            else
+            {
+
+                var finalResult = productCustomers.Where(x => x.DateFrom.Value.Date >= startDate && x.DateFrom.Value.Date <= endDate);
+                result = Tuple.Create<IEnumerable<Product>, IEnumerable<Customer>,
+                               IEnumerable<JoinTable>,
+                               IEnumerable<Productcustomer>>
+                               (products, customers, model, finalResult);
+
+
+                ViewBag.PC = finalResult.Sum(x => x.Quantity);
+
+                ViewBag.TotalSales = finalResult.Sum(x => x.Quantity * (x.Product.Price));
+
+                return View(result);
+            }
+
+
+
+
+            return View();
+        }
+
     }
 }
